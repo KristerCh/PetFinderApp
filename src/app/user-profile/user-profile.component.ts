@@ -15,7 +15,7 @@ export class UserProfileComponent implements OnInit {
   profileForm: FormGroup;
   subscription: Subscription;
   profile: Entity;
-  createMode: boolean = true;
+  createMode: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private profileSevice: EntityService) { }
@@ -50,7 +50,6 @@ export class UserProfileComponent implements OnInit {
       let profilEntity: Entity = this.profileForm.value; 
       this.profileSevice.saveEntity(profilEntity).subscribe(data => {
         $.notify({icon: "notifications", message: "Registered Profile!"});
-        this.profileForm.reset;
       })
     }else{
       let profilEntity: Entity = this.profileForm.value;

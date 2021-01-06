@@ -2,6 +2,7 @@ import { environment } from './../../environments/environment';
 import { Entity } from './../Models/Entity';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,7 @@ import { Injectable } from '@angular/core';
 export class EntityService {
   controllerUrl: "entity/";
   apiUrl = environment.urlApp;
+  private update = new BehaviorSubject<Entity>({} as any);
 
   constructor(private http: HttpClient) { }
 
