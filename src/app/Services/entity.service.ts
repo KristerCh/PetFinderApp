@@ -8,7 +8,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class EntityService {
-  controllerUrl: "entity/";
+  controllerUrl = "entity";
   apiUrl = environment.urlApp;
   private update = new BehaviorSubject<Entity>({} as any);
 
@@ -19,15 +19,15 @@ export class EntityService {
   }
 
   getEntity(id: number){
-    return this.http.get<Entity>(this.apiUrl + this.controllerUrl + id);
+    return this.http.get<Entity>(this.apiUrl + this.controllerUrl + "/" + id);
   }
 
   editEntity(id: number, entity: Entity){
-    return this.http.put<Entity>(this.apiUrl + this.controllerUrl + id, entity);
+    return this.http.put<Entity>(this.apiUrl + this.controllerUrl + "/" + id, entity);
   }
 
   deletEntity(id: number){
-    return this.http.delete<Entity>(this.apiUrl + this.controllerUrl + id);
+    return this.http.delete<Entity>(this.apiUrl + this.controllerUrl + "/" + id);
   }
 
 }

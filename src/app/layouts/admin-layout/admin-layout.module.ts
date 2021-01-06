@@ -18,6 +18,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSelectModule} from '@angular/material/select';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatIconModule} from '@angular/material/icon';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatInputModule,
     MatSelectModule,
     MatTooltipModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatIconModule
   ],
   declarations: [
     DashboardComponent,
