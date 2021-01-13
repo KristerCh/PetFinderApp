@@ -1,3 +1,4 @@
+import { AuthService } from '@auth0/auth0-angular';
 
 import { EntityService } from './../Services/entity.service';
 import { Entity } from './../Models/Entity';
@@ -19,62 +20,78 @@ export class UserProfileComponent implements OnInit {
   createMode: boolean = false;
   idProfile: any;
 
-  constructor(private formBuilder: FormBuilder,
-    private profileSevice: EntityService, 
-    private route: ActivatedRoute) { 
-      this.profileForm = this.formBuilder.group({
-        identification: ['', Validators.required],
-        userName: ['', Validators.required, Validators.pattern("[A-Za-z]")],
-        name: ['', Validators.pattern("[A-Za-z]")],
-        lastName: ['', Validators.pattern("[A-Za-z]")],
-        phoneNumber: ['',Validators.required, Validators.pattern("[0-9]")],
-        email: ['', Validators.required, Validators.email],
-        address: ['', Validators.required],
-        photo: ['', Validators.required],
-        whatsapp: [true],
-        facebook: ['']
-      })
-    }
+  constructor(
+    public auth: AuthService,
+    private formBuilder: FormBuilder,
+    private profileSevice: EntityService,
+    private route: ActivatedRoute) {
+    this.profileForm = this.formBuilder.group({
+      identification: ['', Validators.required],
+      userName: ['', Validators.required, Validators.pattern("[A-Za-z]")],
+      name: ['', Validators.pattern("[A-Za-z]")],
+      lastName: ['', Validators.pattern("[A-Za-z]")],
+      phoneNumber: ['', Validators.required, Validators.pattern("[0-9]")],
+      email: ['', Validators.required, Validators.email],
+      address: ['', Validators.required],
+      photo: ['', Validators.required],
+      whatsapp: [true],
+      facebook: ['']
+    })
+  }
 
   ngOnInit() {
+    this.getLoggedUserInfo();
     this.idProfile = this.route.snapshot.paramMap.get('id');
 
     this.subscription = this.profileSevice.getEntity(this.idProfile).subscribe(data => {
       this.profile = data;
     });
-    
+
     if(this.idProfile){
       this.loadForm(this.profile);
     }
+
   }
 
-  loadForm(selectedProfile: Entity){
+  getLoggedUserInfo() {
+    if (this.auth.user$) {
+      this.auth.user$.subscribe(
+        res => {
+          console.log(res);
+          this.profile = res;
+          this.profile.userName = res.nickname;
+        }
+      )
+    }
+  }
+
+  loadForm(selectedProfile: Entity) {
     this.profileForm.patchValue(selectedProfile);
   }
 
-  saveProfile(){
-    if(this.profileForm.invalid){
+  saveProfile() {
+    if (this.profileForm.invalid) {
       return;
     }
 
-    if(!this.idProfile){
-      let profilEntity: Entity = this.profileForm.value; 
+    if (!this.idProfile) {
+      let profilEntity: Entity = this.profileForm.value;
       this.profileSevice.saveEntity(profilEntity).subscribe(data => {
-        $.notify({icon: "notifications", message: "Registered Profile!"});
+        $.notify({ icon: "notifications", message: "Registered Profile!" });
       })
-    }else{
+    } else {
       let profilEntity: Entity = this.profileForm.value;
       profilEntity.idEntity = this.profile.idEntity;
       this.profileSevice.editEntity(profilEntity.idEntity, profilEntity).subscribe(data => {
-        $.notify({icon: "notifications", message: "Updated Profile!"});
+        $.notify({ icon: "notifications", message: "Updated Profile!" });
       })
     }
   }
 
-  deleteProfile(id: number){
-    if(confirm("Do you want delete this profile permanently?")){
+  deleteProfile(id: number) {
+    if (confirm("Do you want delete this profile permanently?")) {
       this.profileSevice.deletEntity(id).subscribe(data => {
-        $.notify({icon: "notifications", message: "Permanently deleted Profile!"});
+        $.notify({ icon: "notifications", message: "Permanently deleted Profile!" });
         this.profileForm.reset();
       });
     }
