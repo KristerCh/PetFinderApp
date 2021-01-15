@@ -3,9 +3,11 @@ import { AuthService } from '@auth0/auth0-angular';
 import { EntityService } from './../Services/entity.service';
 import { Entity } from './../Models/Entity';
 import { Subscription } from 'rxjs/Subscription';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 declare var $: any;
 
 @Component({
@@ -13,56 +15,75 @@ declare var $: any;
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent implements OnInit, OnDestroy {
   profileForm: FormGroup;
-  subscription: Subscription;
   profile: Entity;
-  createMode: boolean = false;
-  idProfile: any;
+  // createMode: boolean = false;
+  // idProfile: any;
+
+  unsubscribeAll: Subject<void>;
+
 
   constructor(
     public auth: AuthService,
     private formBuilder: FormBuilder,
     private profileSevice: EntityService,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
     this.profileForm = this.formBuilder.group({
       identification: ['', Validators.required],
-      userName: ['', Validators.required, Validators.pattern("[A-Za-z]")],
-      name: ['', Validators.pattern("[A-Za-z]")],
-      lastName: ['', Validators.pattern("[A-Za-z]")],
-      phoneNumber: ['', Validators.required, Validators.pattern("[0-9]")],
-      email: ['', Validators.required, Validators.email],
+      userName: [''],
+      name: [''],
+      lastName: [''],
+      phoneNumber: ['', Validators.required],
+      email: ['', Validators.required],
       address: ['', Validators.required],
-      photo: ['', Validators.required],
+      photo: [''],
       whatsapp: [true],
       facebook: ['']
-    })
+    });
+    this.profile = new Entity;
+    this.unsubscribeAll = new Subject();
   }
 
   ngOnInit() {
-    this.getLoggedUserInfo();
-    this.idProfile = this.route.snapshot.paramMap.get('id');
+      this.getLoggedUserInfo();
 
-    this.subscription = this.profileSevice.getEntity(this.idProfile).subscribe(data => {
-      this.profile = data;
-    });
+    // this.idProfile = this.route.snapshot.paramMap.get('id');
 
-    if(this.idProfile){
-      this.loadForm(this.profile);
-    }
+    // this.subscription = this.profileSevice.getEntity(this.idProfile).subscribe(data => {
+    //   this.profile = data;
+    // });
+
+    // if (this.idProfile) {
+    //   this.loadForm(this.profile);
+    // }
+    this.loadForm(this.profile);
 
   }
 
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
+
   getLoggedUserInfo() {
-    if (this.auth.user$) {
-      this.auth.user$.subscribe(
+
+    this.auth.user$
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(
         res => {
           console.log(res);
+          let id = res.sub.split("|")[1];
           this.profile = res;
           this.profile.userName = res.nickname;
+          this.profile.idEntity = id;
+          this.profile.name = res.given_name;
+          this.profile.lastName = res.family_name;
+          this.loadForm(this.profile);
         }
-      )
-    }
+      );
   }
 
   loadForm(selectedProfile: Entity) {
@@ -70,22 +91,17 @@ export class UserProfileComponent implements OnInit {
   }
 
   saveProfile() {
-    if (this.profileForm.invalid) {
+    console.log(this.profileForm.value);
+    if (!this.profileForm.valid) {
       return;
     }
 
-    if (!this.idProfile) {
-      let profilEntity: Entity = this.profileForm.value;
-      this.profileSevice.saveEntity(profilEntity).subscribe(data => {
-        $.notify({ icon: "notifications", message: "Registered Profile!" });
-      })
-    } else {
-      let profilEntity: Entity = this.profileForm.value;
-      profilEntity.idEntity = this.profile.idEntity;
-      this.profileSevice.editEntity(profilEntity.idEntity, profilEntity).subscribe(data => {
-        $.notify({ icon: "notifications", message: "Updated Profile!" });
-      })
-    }
+    let profilEntity: Entity = this.profileForm.value;
+    this.profileSevice.saveEntity(profilEntity).subscribe(data => {
+      $.notify({ icon: "notifications", message: "Registered Profile!" });
+    })
+    this.router.navigate(["dashboard"]);
+
   }
 
   deleteProfile(id: number) {
