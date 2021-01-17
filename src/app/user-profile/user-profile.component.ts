@@ -97,7 +97,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     }
 
     let profilEntity: Entity = this.profileForm.value;
-    this.profileSevice.saveEntity(profilEntity).subscribe(data => {
+    this.profileSevice.saveEntity(profilEntity)
+    .pipe(takeUntil(this.unsubscribeAll))
+    .subscribe(data => {
       $.notify({ icon: "notifications", message: "Registered Profile!" });
     })
     this.router.navigate(["dashboard"]);
