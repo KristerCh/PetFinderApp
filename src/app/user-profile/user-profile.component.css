@@ -3,3 +3,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.card-profile{
+  margin-top: 5%;
+}

@@ -7,7 +7,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 declare var $: any;
 
 @Component({
@@ -33,6 +33,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   ) {
     this.profileForm = this.formBuilder.group({
       identification: ['', Validators.required],
+      auth0Id: [''],
       userName: [''],
       name: [''],
       lastName: [''],
@@ -48,7 +49,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-      this.getLoggedUserInfo();
+    this.getLoggedUserInfo();
+    this.greeting();
 
     // this.idProfile = this.route.snapshot.paramMap.get('id');
 
@@ -78,7 +80,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           let id = res.sub.split("|")[1];
           this.profile = res;
           this.profile.userName = res.nickname;
-          this.profile.idEntity = id;
+          this.profile.auth0Id = id;
           this.profile.name = res.given_name;
           this.profile.lastName = res.family_name;
           this.loadForm(this.profile);
@@ -98,11 +100,17 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
     let profilEntity: Entity = this.profileForm.value;
     this.profileSevice.saveEntity(profilEntity)
-    .pipe(takeUntil(this.unsubscribeAll))
+    .pipe(
+      finalize(
+        () => {
+          this.router.navigate(["dashboard"]);
+        }
+      ),
+      takeUntil(this.unsubscribeAll)
+    )
     .subscribe(data => {
       $.notify({ icon: "notifications", message: "Registered Profile!" });
     })
-    this.router.navigate(["dashboard"]);
 
   }
 
@@ -113,6 +121,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         this.profileForm.reset();
       });
     }
+  }
+
+  greeting(){
+    $.notify({ icon: "account_circle", message: "Welcome! Please complete your profile information."});
   }
 
 }

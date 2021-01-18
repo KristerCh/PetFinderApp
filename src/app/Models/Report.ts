@@ -1,11 +1,12 @@
 import { Entity } from './Entity';
-import { Pets } from './Pets';
+import { Pet } from './Pet';
 
 export class Report{
-    case?: number;
-    petLost: number;
-    Pets: Pets;
-    reportBy: number;
-    Entity: Entity;
-    recueDate: Date;
+    id?: number;
+    idPet: number;
+    Pet: Pet;
+    idEntity: number;
+    entity: Entity;
+    status: string;
+    rescueDate: Date;
 }

@@ -1,5 +1,6 @@
 export class Entity{
     idEntity?: number;
+    auth0Id?: string;
     identification: string;
     userName: string;
     name?: string;

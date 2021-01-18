@@ -10,7 +10,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class EntityService {
   controllerUrl = "entity";
   apiUrl = environment.urlApp;
-  private update = new BehaviorSubject<Entity>({} as any);
 
   constructor(private http: HttpClient) { }
 
