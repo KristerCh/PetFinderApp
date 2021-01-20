@@ -6,7 +6,7 @@ export class Report{
     idPet: number;
     Pet: Pet;
     idEntity: number;
-    entity: Entity;
+    entity?: Entity;
     status: string;
     rescueDate: Date;
 }

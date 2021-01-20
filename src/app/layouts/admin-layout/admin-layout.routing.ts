@@ -75,7 +75,8 @@ export const AdminLayoutRoutes: Routes = [
     },
     { 
         path: 'new-report',  
-        component: NewReportComponent 
+        component: NewReportComponent,
+        canActivate: [AuthGuard]
     },
     { 
         path: 'user-profile/:id',  

@@ -60,6 +60,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
     // if (this.idProfile) {
     //   this.loadForm(this.profile);
+    //    createMode = true;
     // }
     this.loadForm(this.profile);
 
@@ -71,7 +72,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   getLoggedUserInfo() {
-
     this.auth.user$
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(

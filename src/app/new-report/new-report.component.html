@@ -1,6 +1,6 @@
 <div class="main-content">
     <div class="container-fluid">
-        <form action="">
+        <form [formGroup]="reportForm">
             <div class="card">
                 <div class="card-header card-header-danger">
                     <h3 class="card-title">Create Report </h3>
@@ -9,34 +9,30 @@
                 </div>
                 <div class="card-profile">
                     <div class="card-avatar">
-                      <a href="">
-                        <img class="img" src="./assets/img/faces/marc.jpg" />
-                      </a>
+                        <a href="">
+                            <img class="img" src="./assets/img/faces/marc.jpg" />
+                        </a>
                     </div>
                     <div class="card-body">
-                      <h4 class="card-title"></h4>
-                      <p class="card-description">
-                        {{ userName }}
-                      </p>
-                      <button mat-button class="btn btn-danger btn-round">
-                        <mat-icon>upload</mat-icon>upload
-                      </button>
+                        <button mat-button class="btn btn-danger btn-round">
+                            <mat-icon>upload</mat-icon>upload
+                        </button>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4">
                             <mat-form-field class="example-full-width">
-                                <input matInput formControlName="userName" value="{{ profile?.userName }}"
-                                    placeholder="User Name">
+                                <input matInput [value]="loggedUser?.userName" readonly placeholder="User Name">
+                                <input type="hidden" value="{{loggedUser?.idEntity}}" formControlName="idEntity">
                             </mat-form-field>
                         </div>
                         <div class="col-md-4">
                             <mat-form-field class="example-full-width">
                                 <mat-label>Type Report:</mat-label>
-                                <mat-select>
+                                <mat-select formControlName="status">
                                     <mat-option value="Found">Found</mat-option>
-                                    <mat-option value="Rescued">Rescued</mat-option>
+                                    <mat-option value="Rescued">Delivered</mat-option>
                                     <mat-option value="Lost">Lost</mat-option>
                                 </mat-select>
                             </mat-form-field>
@@ -44,7 +40,7 @@
                         <div class="col-md-4">
                             <mat-form-field class="example-full-width">
                                 <mat-label>Rescue date</mat-label>
-                                <input matInput [matDatepicker]="rescueDate">
+                                <input matInput [matDatepicker]="rescueDate" formControlName="rescueDate">
                                 <mat-datepicker-toggle matSuffix [for]="rescueDate"></mat-datepicker-toggle>
                                 <mat-datepicker #rescueDate></mat-datepicker>
                             </mat-form-field>
@@ -61,21 +57,21 @@
                     <div class="row">
                         <div class="col-md-4">
                             <mat-form-field class="example-full-width">
-                                <input matInput formControlName="namePet" value="{{ pet?.namePet }}"
+                                <input matInput formControlName="namePet"
                                     placeholder="Pet Name">
                             </mat-form-field>
                         </div>
                         <div class="col-md-4">
                             <mat-form-field class="example-full-width">
                                 <mat-label>Species:</mat-label>
-                                <mat-select>
+                                <mat-select formControlName="specie" >
                                     <mat-option *ngFor="let item of species | keyvalue" [value]="item.value">{{item.value}}</mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div> 
                         <div class="col-md-4">
                             <mat-form-field class="example-full-width">
-                                <input matInput formControlName="race" value="{{ pet?.race }}"
+                                <input matInput formControlName="race"
                                     placeholder="Breed">
                             </mat-form-field>
                         </div>    
@@ -90,13 +86,13 @@
                     <div class="row">
                         <div class="col-md-4">
                             <mat-form-field class="example-full-width">
-                            <input matInput formControlName="age" value="{{ pet?.age }}" placeholder="Age" type="number">
+                            <input matInput formControlName="age" placeholder="Age" type="number">
                             </mat-form-field>
                         </div>
                         <div class="col-md-4">
                             <mat-form-field class="example-full-width">
                                 <mat-label>Size:</mat-label>
-                                <mat-select>
+                                <mat-select formControlName="size" >
                                     <mat-option value="Little">Little</mat-option>
                                     <mat-option value="Medium">Medium</mat-option>
                                     <mat-option value="Big">Big</mat-option>
@@ -104,7 +100,8 @@
                             </mat-form-field>
                         </div>
                         <div class="col-md-4">
-                            <button mat-raised-button type="submit" class="btn btn-danger pull-right">Save Report</button>
+                            <button mat-raised-button type="button" (click)="test()" class="btn btn-danger pull-right">Probar</button>
+                            <button mat-raised-button type="submit" [disabled]="!reportForm.valid" (click)="savingReport()" class="btn btn-danger pull-right">Save Report</button>
                         </div>
                     </div>
                 </div>
