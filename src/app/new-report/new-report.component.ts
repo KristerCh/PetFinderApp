@@ -70,13 +70,23 @@ export class NewReportComponent implements OnInit {
 
 
   savingReport(){
-    this.report = this.reportForm.value;
-
-    if(!this.reportForm.valid){
-      return;
+    const reporting: Report = {
+      idEntity: this.loggedUser.idEntity,
+      status: this.reportForm.get('status').value,
+      rescueDate: this.reportForm.get('rescueDate').value,
+      idPet: 0,
+      Pet : { 
+        age: this.reportForm.get('age').value,
+        namePet: this.reportForm.get('namePet').value,
+        specie: this.reportForm.get('specie').value,
+        description: this.reportForm.controls.description.value,
+        size: this.reportForm.get('size').value,
+        race: this.reportForm.get('race').value        
+      }
+       
     }
 
-    this.reportService.saveReport(this.report)
+    this.reportService.saveReport(reporting)
     .pipe(
       takeUntil(this.unsubscribe),
       finalize( () => {
@@ -97,15 +107,6 @@ export class NewReportComponent implements OnInit {
 
   test(){
     const reporting: Report = {
-      // entity: {
-      //   idEntity: this.loggedUser.idEntity,
-      //   userName: this.loggedUser.userName,
-      //   identification: this.loggedUser.identification,
-      //   phoneNumber: this.loggedUser.phoneNumber,
-      //   email: this.loggedUser.email,
-      //   address: this.loggedUser.address,
-      //   photo: this.loggedUser.photo
-      // },
       idEntity: this.loggedUser.idEntity,
       status: this.reportForm.get('status').value,
       rescueDate: this.reportForm.get('rescueDate').value,
@@ -114,12 +115,13 @@ export class NewReportComponent implements OnInit {
         age: this.reportForm.get('age').value,
         namePet: this.reportForm.get('namePet').value,
         specie: this.reportForm.get('specie').value,
-        description: this.reportForm.get('description').value,
+        description: this.reportForm.controls.description.value,
         size: this.reportForm.get('size').value,
         race: this.reportForm.get('race').value        
       }
        
     }
+
     console.warn(this.reportForm.value);
     console.log(reporting);
 
