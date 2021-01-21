@@ -24,7 +24,7 @@
                         <div class="col-md-4">
                             <mat-form-field class="example-full-width">
                                 <input matInput [value]="loggedUser?.userName" readonly placeholder="User Name">
-                                <input type="hidden" value="{{loggedUser?.idEntity}}" formControlName="idEntity">
+                                <input type="hidden" [value]="loggedUser?.idEntity" formControlName="idEntity">
                             </mat-form-field>
                         </div>
                         <div class="col-md-4">
@@ -32,7 +32,7 @@
                                 <mat-label>Type Report:</mat-label>
                                 <mat-select formControlName="status">
                                     <mat-option value="Found">Found</mat-option>
-                                    <mat-option value="Rescued">Delivered</mat-option>
+                                    <mat-option value="Delivered">Delivered</mat-option>
                                     <mat-option value="Lost">Lost</mat-option>
                                 </mat-select>
                             </mat-form-field>

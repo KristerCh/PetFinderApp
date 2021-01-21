@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Report } from 'app/Models/Report';
+import { ReportsService } from 'app/Services/reports.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-table-list',
@@ -7,9 +11,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TableListComponent implements OnInit {
 
-  constructor() { }
+  reports: Report[];
+
+  private unsubscribe: Subject<void>;
+  actual: number = 1;
+
+  constructor(private reportService: ReportsService) { 
+    this.unsubscribe = new Subject();
+  }
 
   ngOnInit() {
+    this.getReports();
+  }
+
+  getReports(){
+    this.reportService.getReports()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        res => {
+          this.reports = res;
+          console.log(this.reports)
+        }
+      )
   }
 
 }

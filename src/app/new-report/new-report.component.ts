@@ -68,8 +68,8 @@ export class NewReportComponent implements OnInit {
     );
   }
 
-
   savingReport(){
+
     const reporting: Report = {
       idEntity: this.loggedUser.idEntity,
       status: this.reportForm.get('status').value,
@@ -79,52 +79,27 @@ export class NewReportComponent implements OnInit {
         age: this.reportForm.get('age').value,
         namePet: this.reportForm.get('namePet').value,
         specie: this.reportForm.get('specie').value,
-        description: this.reportForm.controls.description.value,
+        description: this.reportForm.get('description').value,
         size: this.reportForm.get('size').value,
         race: this.reportForm.get('race').value        
       }
-       
     }
 
     this.reportService.saveReport(reporting)
     .pipe(
       takeUntil(this.unsubscribe),
       finalize( () => {
-        this.router.navigate(['/dashboard'])
+        this.router.navigate(['/dashboard']);
+        console.error($.notify({ icon: "notifications", message: "Unsaved Report!" }));
       })
     )
     .subscribe(
       res => {
-        $.notify({ icon: "notification", message: "Report Created Successfull!"})
+        $.notify({ icon: "notification", message: "Report Created Successfull!"});
         this.reportForm.reset();
         
       }
-    )
-
-    console.log(this.report);
-
-  }
-
-  test(){
-    const reporting: Report = {
-      idEntity: this.loggedUser.idEntity,
-      status: this.reportForm.get('status').value,
-      rescueDate: this.reportForm.get('rescueDate').value,
-      idPet: 0,
-      Pet : { 
-        age: this.reportForm.get('age').value,
-        namePet: this.reportForm.get('namePet').value,
-        specie: this.reportForm.get('specie').value,
-        description: this.reportForm.controls.description.value,
-        size: this.reportForm.get('size').value,
-        race: this.reportForm.get('race').value        
-      }
-       
-    }
-
-    console.warn(this.reportForm.value);
-    console.log(reporting);
-
+    );
   }
 
 

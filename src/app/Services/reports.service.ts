@@ -23,7 +23,7 @@ export class ReportsService {
     }
 
     getReports(){
-      return this.http.get<Report>(this.apiUrl + this.UrlController);
+      return this.http.get<Report[]>(this.apiUrl + this.UrlController);
     }
 
     editReport(id: number, reporting: Report){

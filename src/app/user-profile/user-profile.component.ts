@@ -1,12 +1,10 @@
 import { AuthService } from '@auth0/auth0-angular';
-
 import { EntityService } from './../Services/entity.service';
 import { Entity } from './../Models/Entity';
-import { Subscription } from 'rxjs/Subscription';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
+import { empty, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 declare var $: any;
 
@@ -18,18 +16,16 @@ declare var $: any;
 export class UserProfileComponent implements OnInit, OnDestroy {
   profileForm: FormGroup;
   profile: Entity;
-  // createMode: boolean = false;
-  // idProfile: any;
 
+  userDB: Entity;
   unsubscribeAll: Subject<void>;
 
 
   constructor(
     public auth: AuthService,
     private formBuilder: FormBuilder,
-    private profileSevice: EntityService,
-    private route: ActivatedRoute,
-    private router: Router
+    private profileService: EntityService,
+    private router: Router,
   ) {
     this.profileForm = this.formBuilder.group({
       identification: ['', Validators.required],
@@ -49,21 +45,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.getLoggedUserInfo();
-    this.greeting();
-
-    // this.idProfile = this.route.snapshot.paramMap.get('id');
-
-    // this.subscription = this.profileSevice.getEntity(this.idProfile).subscribe(data => {
-    //   this.profile = data;
-    // });
-
-    // if (this.idProfile) {
-    //   this.loadForm(this.profile);
-    //    createMode = true;
-    // }
+    this.getLoggedUserId();
     this.loadForm(this.profile);
-
+    
+    
   }
 
   ngOnDestroy() {
@@ -92,14 +77,46 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.profileForm.patchValue(selectedProfile);
   }
 
+  getLoggedUserId(){
+    let idUser;
+    this.auth.user$
+    .subscribe(
+      res => {
+        idUser = res.sub.split("|")[1];
+        this.getUserFromDB(idUser);
+      }
+    );
+  }
+
+  getUserFromDB(id){
+    this.profileService.getByAuth(id)
+    .pipe(
+      finalize(()=> {
+        if(this.userDB == null){
+          this.getLoggedUserInfo();
+          $.notify({ icon: "account_circle", 
+          message: "Welcome! Please complete your profile information."});
+        }
+      })
+    )
+    .subscribe(
+      info => {
+        this.userDB = info;
+        this.profileForm.patchValue(this.userDB);
+      }
+    );
+    
+  }
+
+
   saveProfile() {
     console.log(this.profileForm.value);
     if (!this.profileForm.valid) {
-      return;
+      return ;
     }
 
     let profilEntity: Entity = this.profileForm.value;
-    this.profileSevice.saveEntity(profilEntity)
+    this.profileService.saveEntity(profilEntity)
     .pipe(
       finalize(
         () => {
@@ -108,23 +125,24 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       ),
       takeUntil(this.unsubscribeAll)
     )
-    .subscribe(data => {
+    .subscribe(
+      data => {
       $.notify({ icon: "notifications", message: "Registered Profile!" });
-    })
+      },
+      error => {
+        $.notify({ icon: "notifications", message: "Unsaved Profile!" });
+      }
+    )
 
   }
 
   deleteProfile(id: number) {
     if (confirm("Do you want delete this profile permanently?")) {
-      this.profileSevice.deletEntity(id).subscribe(data => {
+      this.profileService.deletEntity(id).subscribe(data => {
         $.notify({ icon: "notifications", message: "Permanently deleted Profile!" });
         this.profileForm.reset();
       });
     }
-  }
-
-  greeting(){
-    $.notify({ icon: "account_circle", message: "Welcome! Please complete your profile information."});
   }
 
 }

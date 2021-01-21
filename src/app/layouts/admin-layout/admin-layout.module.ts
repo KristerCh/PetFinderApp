@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminLayoutRoutes } from './admin-layout.routing';
+import {NgxPaginationModule} from 'ngx-pagination';
 import { DashboardComponent } from '../../dashboard/dashboard.component';
 import { UserProfileComponent } from '../../user-profile/user-profile.component';
 import { TableListComponent } from '../../table-list/table-list.component';
@@ -31,6 +32,7 @@ import {MatIconModule} from '@angular/material/icon';
     MatButtonModule,
     MatRippleModule,
     MatFormFieldModule,
+    NgxPaginationModule,
     MatInputModule,
     MatSelectModule,
     MatTooltipModule,
