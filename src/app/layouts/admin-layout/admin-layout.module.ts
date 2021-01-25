@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminLayoutRoutes } from './admin-layout.routing';
 import {NgxPaginationModule} from 'ngx-pagination';
+import { ImgFallbackModule } from 'ngx-img-fallback';
+import {MatDialogModule} from '@angular/material/dialog';
 import { DashboardComponent } from '../../dashboard/dashboard.component';
 import { UserProfileComponent } from '../../user-profile/user-profile.component';
 import { TableListComponent } from '../../table-list/table-list.component';
@@ -20,6 +22,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatIconModule} from '@angular/material/icon';
+import { MapsComponent } from 'app/maps/maps.component';
 
 
 
@@ -40,7 +43,9 @@ import {MatIconModule} from '@angular/material/icon';
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
-    MatIconModule
+    MatIconModule,
+    ImgFallbackModule,
+    MatDialogModule
   ],
   declarations: [
     DashboardComponent,
@@ -50,6 +55,7 @@ import {MatIconModule} from '@angular/material/icon';
     IconsComponent,
     NotificationsComponent,
     NewReportComponent,
+    MapsComponent
   ]
 })
 

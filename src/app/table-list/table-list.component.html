@@ -18,12 +18,12 @@
                                     <th>Status</th>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let report of reports | paginate: {itemsPerPage: 5, currentPage: actual}">
+                                    <tr *ngFor="let report of reports | paginate: {itemsPerPage: 5, currentPage: actual}" (click)="viewDetailReport(report.id)">
                                         <td>{{ report.pet.namePet }}</td>
                                         <td>{{ report.pet.race }}</td>
                                         <td>{{ report.pet.specie }}</td>
                                         <td>
-                                            <img class="img" src="./assets/img/faces/marc.jpg" />
+                                            <img class="img" src="./assets/imgPets/petsImg.png" />
                                         </td>
                                         <td>{{ report.status }}</td>
                                     </tr>

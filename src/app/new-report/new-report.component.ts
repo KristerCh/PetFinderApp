@@ -7,6 +7,7 @@ import { Report } from 'app/Models/Report';
 import { Species } from 'app/Models/species.enum';
 import { EntityService } from 'app/Services/entity.service';
 import { ReportsService} from 'app/Services/reports.service'
+import { environment } from 'environments/environment';
 import { pipe, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 declare var $: any;
@@ -23,7 +24,9 @@ export class NewReportComponent implements OnInit {
   report: Report;
   unsubscribe: Subject<void>;
   loggedUser: Entity;
+  imgUrl: any;
   idUser: string;
+  petsAvatar = environment.petsAvatar;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -47,10 +50,10 @@ export class NewReportComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.FindUserbyId();
+    this.findUserbyId();
   }
 
-  FindUserbyId(){
+  findUserbyId(){
     this.auth.user$
     .subscribe(
       res => {
@@ -58,7 +61,6 @@ export class NewReportComponent implements OnInit {
         this.entityService.getByAuth(this.idUser).subscribe(
           info => {
             this.loggedUser = info;
-
             this.reportForm.patchValue({
               idEntity: this.loggedUser.idEntity
             });
@@ -66,6 +68,25 @@ export class NewReportComponent implements OnInit {
         );
       }
     );
+  }
+
+  handleFile(event){
+    const files = event.target.files;
+    
+    if(files.length == 0)
+      return;
+
+    const mimeType = files[0].type;
+    if(mimeType.match(/image\/*/)==null){
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onload = (_event) => {
+      this.imgUrl = reader.result;
+    }
+
   }
 
   savingReport(){
@@ -81,7 +102,8 @@ export class NewReportComponent implements OnInit {
         specie: this.reportForm.get('specie').value,
         description: this.reportForm.get('description').value,
         size: this.reportForm.get('size').value,
-        race: this.reportForm.get('race').value        
+        race: this.reportForm.get('race').value,
+        photo: this.imgUrl
       }
     }
 

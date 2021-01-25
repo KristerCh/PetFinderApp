@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MapsComponent } from 'app/maps/maps.component';
 import { Report } from 'app/Models/Report';
 import { ReportsService } from 'app/Services/reports.service';
 import { Subject } from 'rxjs';
@@ -16,7 +18,8 @@ export class TableListComponent implements OnInit {
   private unsubscribe: Subject<void>;
   actual: number = 1;
 
-  constructor(private reportService: ReportsService) { 
+  constructor(private reportService: ReportsService,
+    public dialog: MatDialog) { 
     this.unsubscribe = new Subject();
   }
 
@@ -34,5 +37,11 @@ export class TableListComponent implements OnInit {
         }
       )
   }
+
+  viewDetailReport(id: any){
+    const confiDialog = new MatDialogConfig();
+    confiDialog.data = id
+    this.dialog.open(MapsComponent, confiDialog);
+   }
 
 }

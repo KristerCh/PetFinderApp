@@ -9,14 +9,15 @@
                 </div>
                 <div class="card-profile">
                     <div class="card-avatar">
-                        <a href="">
-                            <img class="img" src="./assets/img/faces/marc.jpg" />
-                        </a>
+                      <a href="">                  
+                          <img class="img" [src-fallback]="petsAvatar" [src]="imgUrl" />
+                      </a>
                     </div>
                     <div class="card-body">
-                        <button mat-button class="btn btn-danger btn-round">
-                            <mat-icon>upload</mat-icon>upload
-                        </button>
+                      <button mat-button class="btn btn-danger btn-round" type="submit" (click)="imageInput.click()">
+                        <mat-icon>upload</mat-icon>upload
+                        <input #imageInput type="file" (change)="handleFile($event)" formControlName="photo" accept="image/*" style="display:none;" />
+                      </button>
                     </div>
                 </div>
                 <div class="card-body">

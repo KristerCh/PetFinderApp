@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { empty, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
+import { environment } from 'environments/environment';
 declare var $: any;
 
 @Component({
@@ -16,9 +17,11 @@ declare var $: any;
 export class UserProfileComponent implements OnInit, OnDestroy {
   profileForm: FormGroup;
   profile: Entity;
-
+  createMode: boolean = false ;
   userDB: Entity;
+  imgUrl: any;
   unsubscribeAll: Subject<void>;
+  defaultAvatar = "assets/faces/UserFace.png";
 
 
   constructor(
@@ -47,8 +50,6 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.getLoggedUserId();
     this.loadForm(this.profile);
-    
-    
   }
 
   ngOnDestroy() {
@@ -77,11 +78,31 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.profileForm.patchValue(selectedProfile);
   }
 
+  handleFile(event){
+    const files = event.target.files;
+    
+    if(files.length == 0)
+      return;
+
+    const mimeType = files[0].type;
+    if(mimeType.match(/image\/*/)==null){
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onload = (_event) => {
+      this.imgUrl = reader.result;
+    }
+
+  }
+
   getLoggedUserId(){
     let idUser;
     this.auth.user$
     .subscribe(
       res => {
+        console.log(res);
         idUser = res.sub.split("|")[1];
         this.getUserFromDB(idUser);
       }
@@ -108,6 +129,32 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     
   }
 
+  EditProfile(){
+
+    if(this.userDB.idEntity == null){
+      this.createMode = true;
+      this.saveProfile();
+    }else{
+      this.createMode = false;
+      this.profileService.editEntity(this.profile.idEntity, this.profile)
+      .pipe(
+        finalize(
+          () => {
+            this.router.navigate(["dashboard"]);
+          }
+        ),
+        takeUntil(this.unsubscribeAll)
+      )
+      .subscribe(
+        data => {
+        $.notify({ icon: "notifications", message: "Edited Profile!" });
+        },
+        error => {
+          $.notify({ icon: "notifications", message: "Not Changes in Profile!" });
+        }
+      )
+    }
+  }
 
   saveProfile() {
     console.log(this.profileForm.value);
@@ -136,9 +183,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   }
 
-  deleteProfile(id: number) {
+  deleteProfile() {
     if (confirm("Do you want delete this profile permanently?")) {
-      this.profileService.deletEntity(id).subscribe(data => {
+      this.profileService.deletEntity(this.profile.idEntity).subscribe(data => {
         $.notify({ icon: "notifications", message: "Permanently deleted Profile!" });
         this.profileForm.reset();
       });

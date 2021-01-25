@@ -6,4 +6,7 @@
 export const environment = {
   production: false,
   urlApp: "https://localhost:44393/api/",
+
+  defaultAvatar: "assets/faces/UserFace.png",
+  petsAvatar: "assets/imgPets/petsImg.png"
 };

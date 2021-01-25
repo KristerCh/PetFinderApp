@@ -9,3 +9,20 @@
     transform: scale(5);
     position: absolute;
 }
+
+.alert{
+    background-color: #9c27b0;
+    text-decoration-color: #fff;
+}
+
+h4 {
+    color: white;
+}
+
+a{
+    color: white;
+}
+
+a:hover{
+    color: cyan;
+}

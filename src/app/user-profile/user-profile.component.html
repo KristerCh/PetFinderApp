@@ -5,18 +5,19 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-header card-header-danger">
-              <h4 class="card-title">Your Profile</h4>
+              <h4 class="card-title">{{createMode ? 'Confirm Profile' : 'Edit Profile'}}</h4>
               <p class="card-category">Complete your profile</p>
             </div>
             <div class="card-profile">
               <div class="card-avatar">
-                <a href="javascript:void(0)">
-                  <img class="img" src="./assets/img/faces/marc.jpg" />
+                <a href="">                  
+                    <img class="img" [src-fallback]="defaultAvatar" [src]="imgUrl" />
                 </a>
               </div>
               <div class="card-body">
-                <button mat-button class="btn btn-danger btn-round">
+                <button mat-button class="btn btn-danger btn-round" type="submit" (click)="imageInput.click()">
                   <mat-icon>upload</mat-icon>upload
+                  <input #imageInput type="file" (change)="handleFile($event)" formControlName="photo" accept="image/*" style="display:none;" />
                 </button>
               </div>
             </div>
@@ -74,8 +75,8 @@
                     </mat-checkbox>
                   </div>
                 </div>
-                <button mat-raised-button type="submit" [disabled]="!profileForm.valid" (click)="saveProfile()" class="btn btn-danger pull-right">Save Profile</button>
-                <button mat-raised-button type="submit" (click)="saveProfile(profile?.idProfile)" class="btn btn-outline-danger pull-left">Delete Profile</button>
+                <button mat-raised-button type="submit" [disabled]="!profileForm.valid" (click)="editProfile()" class="btn btn-danger pull-right">Save Profile</button>
+                <button mat-raised-button type="submit" (click)="deleteProfile()" class="btn btn-outline-danger pull-left">Delete Profile</button>
             </div>
           </div>
         </div>
