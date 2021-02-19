@@ -11,7 +11,6 @@ import { UserProfileComponent } from '../../user-profile/user-profile.component'
 import { TableListComponent } from '../../table-list/table-list.component';
 import { TypographyComponent } from '../../typography/typography.component';
 import { IconsComponent } from '../../icons/icons.component';
-import { NotificationsComponent } from '../../notifications/notifications.component';
 import { NewReportComponent } from 'app/new-report/new-report.component';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
@@ -23,6 +22,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatIconModule} from '@angular/material/icon';
 import { MapsComponent } from 'app/maps/maps.component';
+import { FilterPipe } from 'app/pipes/filter.pipe';
 
 
 
@@ -53,9 +53,9 @@ import { MapsComponent } from 'app/maps/maps.component';
     TableListComponent,
     TypographyComponent,
     IconsComponent,
-    NotificationsComponent,
     NewReportComponent,
-    MapsComponent
+    MapsComponent,
+    FilterPipe
   ]
 })
 

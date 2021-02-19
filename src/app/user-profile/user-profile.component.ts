@@ -4,7 +4,7 @@ import { Entity } from './../Models/Entity';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { empty, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { environment } from 'environments/environment';
 declare var $: any;
@@ -16,13 +16,12 @@ declare var $: any;
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
   profileForm: FormGroup;
-  profile: Entity;
-  createMode: boolean = false ;
+  profile: Entity = new Entity;
   userDB: Entity;
-  imgUrl: any;
+  photoFile: any;
   unsubscribeAll: Subject<void>;
   defaultAvatar = "assets/faces/UserFace.png";
-
+  photoURL: any;
 
   constructor(
     public auth: AuthService,
@@ -31,6 +30,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     private router: Router,
   ) {
     this.profileForm = this.formBuilder.group({
+      idEntity: [null],
       identification: ['', Validators.required],
       auth0Id: [''],
       userName: [''],
@@ -55,6 +55,39 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  getLoggedUserId(){
+    let idUser;
+    this.auth.user$
+    .subscribe(
+      res => {
+        console.log(res);
+        idUser = res.sub.split("|")[1];
+        this.getUserFromDB(idUser);
+      }
+    );
+  }
+
+  getUserFromDB(id){
+    this.profileService.getByAuth(id)
+    .pipe(
+      finalize(()=> {
+        if(this.userDB == null){
+          this.getLoggedUserInfo();
+          $.notify({ icon: "account_circle", 
+          message: "Welcome! Please complete your profile information."});
+        }
+      })
+    )
+    .subscribe(
+      info => {
+        this.userDB = info;
+        this.photoFile = "https://localhost:44393" + this.userDB.photo;
+        this.profileForm.patchValue(this.userDB);
+        
+      }
+    );
   }
 
   getLoggedUserInfo() {
@@ -92,51 +125,22 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     const reader = new FileReader();
     reader.readAsDataURL(files[0]);
     reader.onload = (_event) => {
-      this.imgUrl = reader.result;
+      this.photoFile = reader.result;
+      console.log(this.photoFile);
+      this.profileForm.get('photo').setValue(reader.result);
     }
 
   }
+  
 
-  getLoggedUserId(){
-    let idUser;
-    this.auth.user$
-    .subscribe(
-      res => {
-        console.log(res);
-        idUser = res.sub.split("|")[1];
-        this.getUserFromDB(idUser);
-      }
-    );
-  }
-
-  getUserFromDB(id){
-    this.profileService.getByAuth(id)
-    .pipe(
-      finalize(()=> {
-        if(this.userDB == null){
-          this.getLoggedUserInfo();
-          $.notify({ icon: "account_circle", 
-          message: "Welcome! Please complete your profile information."});
-        }
-      })
-    )
-    .subscribe(
-      info => {
-        this.userDB = info;
-        this.profileForm.patchValue(this.userDB);
-      }
-    );
-    
-  }
-
-  EditProfile(){
-
-    if(this.userDB.idEntity == null){
-      this.createMode = true;
+  editProfile(){
+    if(this.userDB == null){
       this.saveProfile();
     }else{
-      this.createMode = false;
-      this.profileService.editEntity(this.profile.idEntity, this.profile)
+      console.log(this.profileForm.value);
+      this.profile.photo = this.photoFile;
+      this.profile = this.profileForm.value;
+      this.profileService.editEntity(this.profile)
       .pipe(
         finalize(
           () => {
@@ -162,7 +166,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       return ;
     }
 
-    let profilEntity: Entity = this.profileForm.value;
+    let profilEntity: Entity = new Entity;
+    profilEntity = this.profileForm.value;
+    console.log(profilEntity);
     this.profileService.saveEntity(profilEntity)
     .pipe(
       finalize(

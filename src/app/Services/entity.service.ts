@@ -3,6 +3,7 @@ import { Entity } from './../Models/Entity';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AngularFireStorage } from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,10 @@ export class EntityService {
 
   
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private storage: AngularFireStorage
+  ) { }
 
   saveEntity(entity: Entity){
     return this.http.post<Entity>(this.apiUrl + this.controllerUrl, entity);
@@ -27,12 +31,20 @@ export class EntityService {
     return this.http.get<Entity>(this.apiUrl + this.controllerUrl + "/getbyauth/" + auth0Id);
   }
 
-  editEntity(id: number, entity: Entity){
-    return this.http.put<Entity>(this.apiUrl + this.controllerUrl + "/" + id, entity);
+  editEntity(entity: Entity){
+    return this.http.put<Entity>(this.apiUrl + this.controllerUrl + "/" + entity.idEntity, entity);
   }
 
   deletEntity(id: number){
     return this.http.delete<Entity>(this.apiUrl + this.controllerUrl + "/" + id);
+  }
+
+  imageUploadTask(fileName: string, data: any){
+    return this.storage.upload(fileName, data);
+  }
+
+  imageUploadReference(fileName: string) {
+    return this.storage.ref(fileName);
   }
 
 }

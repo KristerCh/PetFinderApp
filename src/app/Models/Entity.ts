@@ -11,4 +11,5 @@ export class Entity{
     facebook?: string;
     address: string;
     photo: string;
+
 }

@@ -16,6 +16,8 @@ import { takeUntil } from 'rxjs/operators';
 export class DashboardComponent implements OnInit {
   reports: Report[];
 
+  filterReport = '';
+
   private unsubscribe: Subject<void>;
   pages: number = 1;
 

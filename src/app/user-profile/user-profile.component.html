@@ -5,19 +5,19 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-header card-header-danger">
-              <h4 class="card-title">{{createMode ? 'Confirm Profile' : 'Edit Profile'}}</h4>
+              <h4 class="card-title">Your Information</h4>
               <p class="card-category">Complete your profile</p>
             </div>
             <div class="card-profile">
               <div class="card-avatar">
                 <a href="">                  
-                    <img class="img" [src-fallback]="defaultAvatar" [src]="imgUrl" />
+                  <img class="img" [src-fallback]="defaultAvatar" [src]="photoFile" />
                 </a>
               </div>
               <div class="card-body">
                 <button mat-button class="btn btn-danger btn-round" type="submit" (click)="imageInput.click()">
                   <mat-icon>upload</mat-icon>upload
-                  <input #imageInput type="file" (change)="handleFile($event)" formControlName="photo" accept="image/*" style="display:none;" />
+                  <input #imageInput type="file" (change)="handleFile($event)" accept="image/*" style="display:none;" />
                 </button>
               </div>
             </div>

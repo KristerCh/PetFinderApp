@@ -15,9 +15,11 @@
                         <th>Species</th>
                         <th>Photo</th>
                         <th>Status</th>
+                        <th>Preview</th>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let report of reports | paginate: {itemsPerPage: 5, currentPage: page}">
+                        <tr *ngFor="let report of reports | paginate: {itemsPerPage: 5, currentPage: page}" 
+                        (click)="viewDetailReport(report.id)">
                             <td>{{ report.pet.namePet }}</td>
                             <td>{{ report.pet.race }}</td>
                             <td>{{ report.pet.specie }}</td>
@@ -25,6 +27,13 @@
                                 <img class="img" src="./assets/img/faces/marc.jpg" />
                             </td>
                             <td>{{ report.status }}</td>
+                            <td class="td-actions text-left">
+                                <button mat-raised-button type="button" matTooltip="Show Details"
+                                    [matTooltipPosition]="'above'"
+                                    class="btn btn-primary btn-link btn-sm btn-just-icon">
+                                    <i class="material-icons">visibility</i>
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
